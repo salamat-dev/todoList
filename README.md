@@ -1,11 +1,4 @@
 
----
-
----
-
-# 🇬🇧 English Version (Casual + Emoji)
-
-```markdown
 # 📝 To-Do List App
 
 A clean and simple To-Do List app for managing your daily tasks 😄  
