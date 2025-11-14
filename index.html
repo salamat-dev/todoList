@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    body{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: Arial;
+    }
+
+    .box{
+        width: 90%;
+        margin: 30px auto;
+        padding: 20px;
+        border-radius: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        gap: 10px;
+        background: #edebeb;
+        position: relative;
+
+        > input {
+            width: 60%;
+            height: 46px;
+            padding-left: 10px;
+            flex: 1;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+            font-size: 18px;
+        }
+
+        > button {
+            width: 15%;
+            height: 50px;
+            font-size: 18px;
+            background-color: rgb(68, 122, 239);
+            color: white;
+            transition: 0.4s;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+
+            &:hover{
+                background-color: rgba(68, 122, 239, 0.641);
+            }
+        }
+
+        > div {
+            width: 100%;
+
+            > input {
+                width: 100%;
+                height: 46px;
+                padding-left: 10px;
+                flex: 1;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                border: none;
+                outline: none;
+                font-size: 18px;
+            }
+        }
+
+        #do{
+            width: 40%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: absolute;
+            left: 0;top: 160px;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            border-radius: 15px;
+            gap: 10px;
+            
+            > li {
+                width: 100%;
+                height: 100px;
+                list-style-type: none;
+                padding-left: 15px;
+                padding-bottom: 10px;
+                background: #edebeb;
+                border-radius: 15px;
+                opacity: 0;
+                transform: translateY(-10px);
+                animation: fadeIn 0.3s forwards;
+
+                &:hover{
+                    transform: translateY(-3px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+
+                > b {
+                    width: 50px;
+                    height: 50px;
+                    font-size: 25px;
+                }
+
+                > input {
+                    width: 20px;
+                    height: 20px;
+                }
+
+                > span {
+                    font-size: 22px;
+                }
+            }
+        }
+
+        #done{
+            width: 40%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: absolute;
+            right: 0;top: 160px;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            border-radius: 15px;
+            gap: 10px;
+            
+            > li {
+                width: 100%;
+                height: 100px;
+                list-style-type: none;
+                padding-left: 15px;
+                padding-bottom: 10px;
+                background: #79df91;
+                border-radius: 15px;
+                opacity: 0;
+                transform: translateY(-10px);
+                animation: fadeIn 0.3s forwards;
+
+                &:hover{
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                }
+
+                > b {
+                    width: 50px;
+                    height: 50px;
+                    font-size: 25px;
+                }
+
+                > input {
+                    width: 20px;
+                    height: 20px;
+                }
+
+                > span {
+                    font-size: 20px;
+                }
+            }
+        }
+    }
+
+    .hide {
+        display: none !important;
+    }
+
+    #search {
+        display: none;
+    }
+
+    .abs{
+        position: absolute;
+    }
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+</style>
+
+<body>
+    <div class="box">
+        <input type="text" placeholder="Add To Do">
+        <button>Add</button>
+        <button>Delete All</button>
+        <div>
+            <input type="text" name="" id="search" placeholder="Search">
+        </div>
+        <ul id = do></ul>
+        <ul id = done></ul>
+    </div>
+
+</body>
+
+<script>
+    const inp = document.querySelector('input')
+    const btn = document.querySelectorAll('.box > button')
+    const _do = document.querySelector('#do')
+    const done = document.querySelector('#done')
+    const _serach = document.querySelector('#search')
+
+    let editLi = null
+
+    btn[0].addEventListener('click', () => {
+        let tempValue = inp.value
+        if(tempValue == ''){
+            alert('Fill in the list.!')
+            return
+        }
+
+        if(_do.children.length > 0 || done.children.length > 0) _serach.style.display = 'block'
+
+        if(btn[0].innerText === 'Save' && editLi) {
+            editLi.querySelector('h2').innerText = tempValue
+            btn[0].innerText = 'Add'
+            inp.value = null
+            editLi = null
+        }else{
+            const li = document.createElement('li')
+            li.innerHTML = `
+            <h2>${tempValue}</h2>
+            <b onclick = 'myEdit(this)'>🖊</b>
+            <b onclick = 'myDelet(this)'>❌</b>
+            <input type="checkbox" onchange = 'mySave(this)'>
+            `
+            _do.appendChild(li)
+            setTimeout(() => {
+                if (_do.children.length > 0 || done.children.length > 0) {
+                    _serach.style.display = 'block'
+                }
+            }, 0)
+
+            inp.value=null
+            inp.focus()
+        }
+
+    })
+
+    function myDelet(s){
+        if(confirm('sure?')){
+            s.parentElement.remove()
+
+            setTimeout(() => {
+                if(_do.children.length === 0 && done.children.length === 0){
+                    _serach.style.display = 'none'
+                }
+            }, 0)
+        }
+    }
+
+
+    function myEdit(s){
+        const btn = document.querySelector('.box > button')
+        btn.innerText = 'Save'
+
+        const inp = document.querySelector('.box > input')
+
+        let text = s.previousElementSibling.innerText
+
+        inp.value = text
+
+        editLi = s.parentElement
+        inp.focus()
+    }
+
+    function mySave(s){
+        const li = s.parentElement
+
+        const editIcon = li.querySelector('b[onclick*=myEdit]')
+        if(editIcon) editIcon.remove()
+        done.appendChild(li)
+        
+        s.disabled = true
+    }
+
+
+    btn[1].addEventListener('click', () => {
+        if(_do.children.length === 0 && done.children.length === 0){
+            alert('There are no items to delete.')
+            return
+        }
+
+        if(confirm('Are you sure you want to delete all tasks?')) {
+            _do.innerHTML = ''
+            done.innerHTML = ''
+            setTimeout(() => {
+                if(_do.children.length === 0 && done.children.length === 0){
+                _serach.style.display = 'none'
+            }
+        }, 0)
+    }
+    })
+
+
+    _serach.addEventListener('keyup', (e) => {
+        let temp = e.target.value.toLowerCase()
+
+        const _h2 = document.querySelectorAll('ul h2')
+        _h2.forEach((val) => {
+            if(val.innerText.indexOf(temp) >= 0){
+                val.parentElement.classList.remove('hide')
+            }else{
+                val.parentElement.classList.add('hide')
+            }
+        })
+    })
+
+</script>
+
+</html>
